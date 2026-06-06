@@ -183,6 +183,63 @@
     return result;
   }
 
+  /* ---- Dot Email Generator ---- */
+  function generateDotEmails(email) {
+    const parts = email.trim().toLowerCase().split('@');
+    if (parts.length !== 2) return [];
+    const [name, domain] = parts;
+    if (domain !== 'gmail.com' && domain !== 'googlemail.com') return [];
+    const n = name.length;
+    if (n < 2) return [];
+    const total = Math.pow(2, n - 1);
+    const maxGen = 2000;
+    const limit = Math.min(total, maxGen);
+    const results = [];
+    for (let mask = 0; mask < limit; mask++) {
+      let dotted = '';
+      for (let i = 0; i < n; i++) {
+        dotted += name[i];
+        if (i < n - 1 && (mask & (1 << i))) dotted += '.';
+      }
+      results.push(dotted + '@gmail.com');
+    }
+    return results;
+  }
+
+  function updateDotCount() {
+    const input = $('#dotInput').value.trim().toLowerCase();
+    const parts = input.split('@');
+    const countEl = $('#dotCount');
+    if (parts.length !== 2 || (parts[1] !== 'gmail.com' && parts[1] !== 'googlemail.com')) {
+      countEl.textContent = 'Need @gmail.com';
+      countEl.style.color = 'var(--text-muted)';
+      return;
+    }
+    const n = parts[0].length;
+    if (n < 2) { countEl.textContent = 'Name too short'; countEl.style.color = 'var(--danger)'; return; }
+    const total = Math.pow(2, n - 1);
+    const display = total > 2000 ? '2000+' : total;
+    countEl.textContent = display + ' possible';
+    countEl.style.color = 'var(--primary)';
+  }
+
+  function handleDotGenerate() {
+    const input = $('#dotInput').value.trim();
+    if (!input) { showToast('Enter a Gmail address first.', 'error'); return; }
+    const dots = generateDotEmails(input);
+    if (dots.length === 0) {
+      showToast('Only works with @gmail.com addresses.', 'error');
+      return;
+    }
+    const added = addEmails(dots);
+    if (added > 0) {
+      showToast(added + ' dot email' + (added > 1 ? 's' : '') + ' generated & imported!', 'success');
+      showCopyScreen();
+    } else {
+      showToast('All variations already in list.', 'info');
+    }
+  }
+
   /* ---- Import handlers ---- */
   function handlePaste() {
     const ta = $('#pasteArea');
@@ -425,6 +482,13 @@
         showToast(r.msg, r.ok ? 'success' : 'error');
         if (r.ok) { singleInput.value = ''; showCopyScreen(); }
       }
+    });
+
+    /* Dot Generator */
+    $('#dotInput').addEventListener('input', updateDotCount);
+    $('#dotGenBtn').addEventListener('click', handleDotGenerate);
+    $('#dotInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); handleDotGenerate(); }
     });
 
     /* Filter */
