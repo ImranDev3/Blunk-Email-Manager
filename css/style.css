@@ -250,8 +250,8 @@ body {
 .copy-topbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
+  gap: 10px;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--border-light);
   background: linear-gradient(135deg, #181a22, #14161c);
 }
@@ -271,18 +271,18 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .stat-card {
-  padding: 14px 16px;
+  padding: 10px 12px;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   background: var(--surface-soft);
   transition: border-color 0.2s, transform 0.15s;
 }
@@ -293,12 +293,12 @@ body {
 }
 
 .stat-icon {
-  width: 38px; height: 38px;
-  border-radius: 10px;
+  width: 32px; height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
   flex-shrink: 0;
 }
 
@@ -310,17 +310,17 @@ body {
 .stat-card.remaining .stat-value { color: var(--warning); }
 
 .stat-info { display: flex; flex-direction: column; }
-.stat-value { font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -0.3px; }
-.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
+.stat-value { font-size: 18px; font-weight: 700; line-height: 1.1; letter-spacing: -0.3px; }
+.stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
 
 /* ===== COPY QUEUE ===== */
 .copy-queue {
   border-bottom: 1px solid var(--border-light);
   background: linear-gradient(135deg, #141621, #111318);
-  padding: 16px 24px;
+  padding: 12px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .queue-header {
@@ -360,15 +360,15 @@ body {
 }
 
 .queue-email {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   color: var(--text);
   word-break: break-all;
-  padding: 14px 16px;
+  padding: 10px 14px;
   background: var(--surface-card);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   text-align: center;
   letter-spacing: -0.2px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -565,9 +565,9 @@ body {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border-light);
   flex-wrap: wrap;
 }
 
@@ -643,12 +643,12 @@ body {
 }
 
 /* ===== EMAIL GRID ===== */
-.list-wrap { padding: 16px; }
+.list-wrap { padding: 12px; }
 
 .email-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 5px;
   min-width: 0;
 }
 
@@ -675,10 +675,10 @@ body {
 .email-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 11px 13px;
+  gap: 4px;
+  padding: 8px 10px;
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   background: var(--surface-card);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
@@ -707,21 +707,22 @@ body {
 .email-card .card-top {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: 6px;
 }
 
 .email-card .card-idx {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   color: var(--text-muted);
   background: var(--border);
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
 .email-card.done .card-idx {
@@ -732,12 +733,12 @@ body {
 .email-card .email-text {
   flex: 1;
   min-width: 0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   color: var(--text);
   word-break: break-all;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .email-card.done .email-text {
@@ -749,14 +750,14 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  margin-top: 2px;
+  gap: 4px;
+  margin-top: 1px;
 }
 
 .email-card .badge {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 1px 6px;
   border-radius: 100px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -776,8 +777,8 @@ body {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 4px 5px;
-  border-radius: 5px;
+  padding: 2px 4px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s;
   line-height: 1;
@@ -787,7 +788,7 @@ body {
 .email-card .card-actions .copy-btn:hover { color: var(--primary) !important; }
 .email-card .card-actions .toggle-btn:hover { color: var(--success) !important; }
 
-.email-card .card-actions .card-btn .ti { font-size: 14px; }
+.email-card .card-actions .card-btn .ti { font-size: 12px; }
 
 .email-card.done .card-actions .card-btn { opacity: 0.6; }
 .email-card.done:hover .card-actions .card-btn { opacity: 1; }
@@ -917,7 +918,7 @@ body {
   .palette-swatches { justify-content: center; order: 10; }
 
   .list-wrap { padding: 8px; }
-  .email-grid { gap: 6px; }
+  .email-grid { gap: 4px; }
 
   .toast-container { left: 10px; right: 10px; bottom: 10px; max-width: none; }
   .toast { font-size: 12px; padding: 11px 14px; }
@@ -944,10 +945,10 @@ body {
   .search-wrap .ti { left: 9px; font-size: 14px; }
 
   .modal-box { padding: 24px; }
-  .email-card { padding: 9px 10px; }
-  .email-card .email-text { font-size: 11px; }
-  .email-card .card-idx { width: 18px; height: 18px; font-size: 9px; }
-  .email-card .card-actions .card-btn .ti { font-size: 13px; }
+  .email-card { padding: 6px 8px; }
+  .email-card .email-text { font-size: 10px; }
+  .email-card .card-idx { width: 15px; height: 15px; font-size: 8px; }
+  .email-card .card-actions .card-btn .ti { font-size: 11px; }
 }
 
 @media (max-width: 480px) {
@@ -966,9 +967,9 @@ body {
   .header-title { font-size: 14px; }
   .header-icon { width: 30px; height: 30px; font-size: 15px; }
   .header-badge { font-size: 9px; padding: 2px 6px; }
-  .email-card { padding: 7px 8px; }
-  .email-card .email-text { font-size: 10px; }
-  .email-card .badge { font-size: 8px; padding: 1px 6px; }
+  .email-card { padding: 5px 6px; }
+  .email-card .email-text { font-size: 9px; }
+  .email-card .badge { font-size: 7px; padding: 1px 4px; }
   .filter-btn { padding: 4px 6px; font-size: 9px; }
   .search-wrap input { font-size: 11px; padding: 5px 8px 5px 26px; }
   .search-wrap .ti { left: 7px; font-size: 12px; }
