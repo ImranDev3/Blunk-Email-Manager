@@ -131,6 +131,27 @@
       </div>
     </div>
 
+    <!-- ===== COPY QUEUE ===== -->
+    <div class="copy-queue" id="copyQueue">
+      <div class="queue-header">
+        <span class="queue-header-left">
+          <i class="ti ti-player-track-next"></i>
+          <span class="queue-title">Copy Queue</span>
+        </span>
+        <span class="queue-progress" id="queueProgress">0 / 0</span>
+      </div>
+      <div class="queue-body" id="queueBody">
+        <div class="queue-email" id="queueEmail">—</div>
+        <div class="queue-actions">
+          <button class="btn btn-primary" id="queueCopyBtn"><i class="ti ti-copy"></i> Copy &amp; Next</button>
+          <button class="btn btn-ghost" id="queueSkipBtn"><i class="ti ti-player-skip-forward"></i> Skip</button>
+        </div>
+      </div>
+      <div class="queue-done" id="queueDone" style="display:none;">
+        <i class="ti ti-circle-check"></i> All emails copied!
+      </div>
+    </div>
+
     <div class="toolbar" id="toolbar">
       <div class="filter-group" id="filterGroup">
         <button class="filter-btn active" data-filter="all">All</button>

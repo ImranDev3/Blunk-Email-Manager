@@ -57,7 +57,7 @@
       if (!raw || typeof raw !== 'string') continue;
       const trimmed = raw.trim();
       if (!trimmed || !isValidEmail(trimmed) || isDuplicate(trimmed)) continue;
-      emails.push({ email: normalizeEmail(trimmed), done: false });
+      emails.unshift({ email: normalizeEmail(trimmed), done: false });
       added++;
     }
     if (added > 0) { saveState(); render(); }
@@ -69,7 +69,7 @@
     if (!t) return { ok: false, msg: 'Please enter an email address.' };
     if (!isValidEmail(t)) return { ok: false, msg: 'Invalid email format.' };
     if (isDuplicate(t)) return { ok: false, msg: 'Duplicate — already in list.' };
-    emails.push({ email: normalizeEmail(t), done: false });
+    emails.unshift({ email: normalizeEmail(t), done: false });
     saveState();
     render();
     return { ok: true, msg: 'Email added!' };
@@ -374,8 +374,63 @@
     });
   }
 
+  /* ---- Copy Queue ---- */
+  function getQueueEmail() {
+    for (var i = 0; i < emails.length; i++) {
+      if (!emails[i].done) return { item: emails[i], index: i };
+    }
+    return null;
+  }
+
+  function updateQueue() {
+    var q = getQueueEmail();
+    var total = emails.length;
+    var done = 0;
+    for (var i = 0; i < emails.length; i++) { if (emails[i].done) done++; }
+    var remaining = total - done;
+
+    $('#queueProgress').textContent = done + ' / ' + total;
+
+    if (!q) {
+      $('#queueBody').style.display = 'none';
+      $('#queueDone').style.display = 'flex';
+      $('#queueEmail').textContent = '\u2014';
+      return;
+    }
+
+    $('#queueBody').style.display = 'flex';
+    $('#queueDone').style.display = 'none';
+    $('#queueEmail').textContent = q.item.email;
+  }
+
+  function queueCopy() {
+    var q = getQueueEmail();
+    if (!q) { showToast('All emails are done.', 'info'); return; }
+    var text = q.item.email;
+    copyToClipboard(text).then(function (ok) {
+      if (ok) {
+        q.item.done = true;
+        saveState();
+        render();
+        showToast('Copied: ' + text, 'success');
+      } else {
+        showToast('Failed to copy.', 'error');
+      }
+    });
+  }
+
+  function queueSkip() {
+    var q = getQueueEmail();
+    if (!q) { showToast('All emails are done.', 'info'); return; }
+    q.item.done = true;
+    saveState();
+    render();
+    showToast('Skipped: ' + q.item.email, 'info');
+  }
+
   /* ---- Render ---- */
   function render() {
+    updateQueue();
     const list = getFiltered();
     const container = $('#emailList');
 
@@ -622,6 +677,20 @@
     /* Bulk */
     $('#copyAllBtn').addEventListener('click', handleCopyAll);
     $('#clearAllBtn').addEventListener('click', handleClearAll);
+
+    /* Copy Queue */
+    $('#queueCopyBtn').addEventListener('click', queueCopy);
+    $('#queueSkipBtn').addEventListener('click', queueSkip);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.shiftKey && $('#screenCopy').style.display !== 'none') {
+        var active = document.activeElement;
+        if (!active || (active.tagName !== 'INPUT' && active.tagName !== 'TEXTAREA')) {
+          e.preventDefault();
+          queueCopy();
+        }
+      }
+    });
 
     /* Email list delegation */
     $('#emailList').addEventListener('click', (e) => {
