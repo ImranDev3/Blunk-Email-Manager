@@ -88,7 +88,6 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
-  overflow: hidden;
 }
 
 /* ---- SCREEN LABEL (import) ---- */
@@ -388,13 +387,7 @@ body {
 /* ---- EMAIL GRID ---- */
 .list-wrap {
   padding: 16px;
-  max-height: 420px;
-  overflow-y: auto;
 }
-
-.list-wrap::-webkit-scrollbar { width: 6px; }
-.list-wrap::-webkit-scrollbar-track { background: transparent; }
-.list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 .email-grid {
   display: grid;
