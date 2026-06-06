@@ -278,14 +278,12 @@
 
   function handleClearAll() {
     if (emails.length === 0) { showToast('List is already empty.', 'info'); return; }
-    showConfirm('Clear all emails?', 'Delete all ' + emails.length + ' email' + (emails.length > 1 ? 's' : '') + '?', () => {
-      const count = emails.length;
-      emails = [];
-      saveState();
-      render();
-      showToast('Cleared ' + count + ' email' + (count > 1 ? 's' : '') + '.', 'info');
-      showImportScreen();
-    });
+    const count = emails.length;
+    emails = [];
+    saveState();
+    render();
+    showToast('Cleared ' + count + ' email' + (count > 1 ? 's' : '') + '.', 'info');
+    showImportScreen();
   }
 
   /* ---- Card copy handler ---- */
@@ -348,7 +346,6 @@
             '<div class="card-actions">' +
               '<button class="card-btn copy-btn" title="Copy" data-index="' + realIndex + '"><i class="ti ti-copy"></i></button>' +
               '<button class="card-btn toggle-btn" title="' + toggleTitle + '" data-index="' + realIndex + '"><i class="' + toggleIcon + '"></i></button>' +
-              '<button class="card-btn del-btn" title="Delete" data-index="' + realIndex + '"><i class="ti ti-trash"></i></button>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -375,8 +372,8 @@
       showImportScreen();
     }
 
-    /* Import More button */
-    $('#backToImportBtn').addEventListener('click', showImportScreen);
+    /* Top Clear All button */
+    $('#topClearAllBtn').addEventListener('click', handleClearAll);
 
     /* Tabs */
     $$('#importTabs .tab-btn').forEach((btn) => {
@@ -460,7 +457,6 @@
         e.stopPropagation();
         if (target.classList.contains('copy-btn')) { handleRowCopy(index); }
         else if (target.classList.contains('toggle-btn')) { toggleDone(index); }
-        else if (target.classList.contains('del-btn')) { removeEmail(index); }
         return;
       }
 
