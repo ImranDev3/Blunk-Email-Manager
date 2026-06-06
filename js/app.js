@@ -278,12 +278,14 @@
 
   function handleClearAll() {
     if (emails.length === 0) { showToast('List is already empty.', 'info'); return; }
-    const count = emails.length;
-    emails = [];
-    saveState();
-    render();
-    showToast('Cleared ' + count + ' email' + (count > 1 ? 's' : '') + '.', 'info');
-    showImportScreen();
+    showConfirm('Clear all emails?', 'Delete all ' + emails.length + ' email' + (emails.length > 1 ? 's' : '') + '? This cannot be undone.', () => {
+      const count = emails.length;
+      emails = [];
+      saveState();
+      render();
+      showToast('Cleared ' + count + ' email' + (count > 1 ? 's' : '') + '.', 'info');
+      showImportScreen();
+    });
   }
 
   /* ---- Card copy handler ---- */
