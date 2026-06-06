@@ -184,7 +184,7 @@
   }
 
   /* ---- Dot Email Generator ---- */
-  function generateDotEmails(email) {
+  function generateDotEmails(email, count) {
     const parts = email.trim().toLowerCase().split('@');
     if (parts.length !== 2) return [];
     const [name, domain] = parts;
@@ -192,8 +192,7 @@
     const n = name.length;
     if (n < 2) return [];
     const total = Math.pow(2, n - 1);
-    const maxGen = 2000;
-    const limit = Math.min(total, maxGen);
+    const limit = Math.min(count || total, total, 5000);
     const results = [];
     for (let mask = 0; mask < limit; mask++) {
       let dotted = '';
@@ -218,7 +217,7 @@
     const n = parts[0].length;
     if (n < 2) { countEl.textContent = 'Name too short'; countEl.style.color = 'var(--danger)'; return; }
     const total = Math.pow(2, n - 1);
-    const display = total > 2000 ? '2000+' : total;
+    const display = total > 9999 ? (total / 1000).toFixed(1) + 'k' : total;
     countEl.textContent = display + ' possible';
     countEl.style.color = 'var(--primary)';
   }
@@ -226,7 +225,9 @@
   function handleDotGenerate() {
     const input = $('#dotInput').value.trim();
     if (!input) { showToast('Enter a Gmail address first.', 'error'); return; }
-    const dots = generateDotEmails(input);
+    let count = parseInt($('#dotCountInput').value, 10);
+    if (isNaN(count) || count < 1) count = 100;
+    const dots = generateDotEmails(input, count);
     if (dots.length === 0) {
       showToast('Only works with @gmail.com addresses.', 'error');
       return;
