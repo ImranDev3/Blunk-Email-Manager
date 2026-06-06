@@ -422,11 +422,11 @@
 
   /* ---- Palette / Color API (colormind.io) ---- */
   const DEFAULT_PALETTE = [
-    [167, 139, 250],  // primary - purple
-    [139, 92, 246],   // primary-dark
-    [52, 211, 153],   // success - emerald
-    [251, 113, 133],  // danger - rose
-    [251, 191, 36],   // warning - amber
+    [124, 140, 248],  // primary — soft indigo
+    [90, 109, 245],   // primary-dark
+    [64, 182, 133],   // success — muted emerald
+    [232, 104, 104],  // danger — soft rose
+    [212, 160, 48],   // warning — warm amber
   ];
 
   let currentPalette = null;
