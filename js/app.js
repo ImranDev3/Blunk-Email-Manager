@@ -288,14 +288,14 @@
     });
   }
 
-  /* ---- Row copy handler ---- */
+  /* ---- Card copy handler ---- */
   function handleRowCopy(index) {
     const text = emails[index].email;
     copyToClipboard(text).then((ok) => {
       if (ok) {
         markDone(index);
-        const row = document.querySelector('.email-row[data-index="' + index + '"]');
-        if (row) row.classList.add('flash-copied');
+        const card = document.querySelector('.email-card[data-index="' + index + '"]');
+        if (card) card.classList.add('flash-copied');
         showToast('Copied: ' + text, 'success');
       } else {
         showToast('Failed to copy.', 'error');
@@ -327,7 +327,7 @@
       return;
     }
 
-    let html = '';
+    let html = '<div class="email-grid">';
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
       const realIndex = emails.indexOf(item);
@@ -338,17 +338,22 @@
       const toggleTitle = item.done ? 'Unmark' : 'Mark Done';
 
       html +=
-        '<div class="email-row ' + doneClass + '" data-index="' + realIndex + '">' +
-          '<span class="idx">' + (realIndex + 1) + '.</span>' +
-          '<span class="email-text">' + escHtml(item.email) + '</span>' +
-          '<span class="badge ' + badgeCls + '">' + badgeTxt + '</span>' +
-          '<div class="actions">' +
-            '<button class="btn-sm copy-act" title="Copy" data-index="' + realIndex + '"><i class="ti ti-copy"></i></button>' +
-            '<button class="btn-sm toggle-act" title="' + toggleTitle + '" data-index="' + realIndex + '"><i class="' + toggleIcon + '"></i></button>' +
-            '<button class="btn-sm del-act" title="Delete" data-index="' + realIndex + '"><i class="ti ti-trash"></i></button>' +
+        '<div class="email-card ' + doneClass + '" data-index="' + realIndex + '">' +
+          '<div class="card-top">' +
+            '<span class="card-idx">' + (realIndex + 1) + '</span>' +
+            '<span class="email-text">' + escHtml(item.email) + '</span>' +
+          '</div>' +
+          '<div class="card-bottom">' +
+            '<span class="badge ' + badgeCls + '">' + badgeTxt + '</span>' +
+            '<div class="card-actions">' +
+              '<button class="card-btn copy-btn" title="Copy" data-index="' + realIndex + '"><i class="ti ti-copy"></i></button>' +
+              '<button class="card-btn toggle-btn" title="' + toggleTitle + '" data-index="' + realIndex + '"><i class="' + toggleIcon + '"></i></button>' +
+              '<button class="card-btn del-btn" title="Delete" data-index="' + realIndex + '"><i class="ti ti-trash"></i></button>' +
+            '</div>' +
           '</div>' +
         '</div>';
     }
+    html += '</div>';
     container.innerHTML = html;
   }
 
@@ -446,16 +451,16 @@
     /* Email list delegation */
     $('#emailList').addEventListener('click', (e) => {
       const target = e.target.closest('button');
-      const row = e.target.closest('.email-row');
-      if (!row) return;
-      const index = parseInt(row.getAttribute('data-index'), 10);
+      const card = e.target.closest('.email-card');
+      if (!card) return;
+      const index = parseInt(card.getAttribute('data-index'), 10);
       if (isNaN(index) || index < 0 || index >= emails.length) return;
 
       if (target) {
         e.stopPropagation();
-        if (target.classList.contains('copy-act')) { handleRowCopy(index); }
-        else if (target.classList.contains('toggle-act')) { toggleDone(index); }
-        else if (target.classList.contains('del-act')) { removeEmail(index); }
+        if (target.classList.contains('copy-btn')) { handleRowCopy(index); }
+        else if (target.classList.contains('toggle-btn')) { toggleDone(index); }
+        else if (target.classList.contains('del-btn')) { removeEmail(index); }
         return;
       }
 
