@@ -11,10 +11,20 @@
   let emails = [];
   let currentFilter = 'all';
   let searchQuery = '';
-  let pendingFile = null;
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => document.querySelectorAll(sel);
+
+  /* ---- Screen Switching ---- */
+  function showImportScreen() {
+    $('#screenImport').style.display = '';
+    $('#screenCopy').style.display = 'none';
+  }
+
+  function showCopyScreen() {
+    $('#screenImport').style.display = 'none';
+    $('#screenCopy').style.display = '';
+  }
 
   /* ---- Storage ---- */
   function loadState() {
@@ -24,11 +34,11 @@
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) emails = parsed;
       }
-    } catch (_) { /* ignore */ }
+    } catch (_) {}
   }
 
   function saveState() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(emails)); } catch (_) { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(emails)); } catch (_) {}
   }
 
   /* ---- Helpers ---- */
@@ -124,11 +134,7 @@
   /* ---- Toast ---- */
   function showToast(msg, type) {
     type = type || 'info';
-    const iconMap = {
-      success: 'ti ti-circle-check',
-      error: 'ti ti-alert-circle',
-      info: 'ti ti-info-circle'
-    };
+    const iconMap = { success: 'ti ti-circle-check', error: 'ti ti-alert-circle', info: 'ti ti-info-circle' };
     const container = $('#toastContainer');
     const el = document.createElement('div');
     el.className = 'toast ' + type;
@@ -166,7 +172,7 @@
     });
   }
 
-  /* ---- Parse pasted text (handles any separator) ---- */
+  /* ---- Parse pasted text ---- */
   function parseText(text) {
     const parts = text.split(/[\s,;]+/);
     const result = [];
@@ -188,6 +194,7 @@
     if (added > 0) {
       showToast(added + ' email' + (added > 1 ? 's' : '') + ' imported.', 'success');
       ta.value = '';
+      showCopyScreen();
     } else {
       showToast('No new valid emails (all duplicates or invalid).', 'info');
     }
@@ -201,13 +208,12 @@
         const text = e.target.result;
         const tokens = parseText(text);
         const added = addEmails(tokens);
-        showToast(
-          added > 0
-            ? added + ' email' + (added > 1 ? 's' : '') + ' imported from ' + file.name
-            : 'No new valid emails in ' + file.name + '.',
-          added > 0 ? 'success' : 'info'
-        );
-        pendingFile = null;
+        if (added > 0) {
+          showToast(added + ' email' + (added > 1 ? 's' : '') + ' imported.', 'success');
+          showCopyScreen();
+        } else {
+          showToast('No new valid emails in ' + file.name + '.', 'info');
+        }
         $('#fileInput').value = '';
       };
       reader.readAsText(file);
@@ -235,22 +241,20 @@
             }
           }
           const added = addEmails(tokens);
-          showToast(
-            added > 0
-              ? added + ' email' + (added > 1 ? 's' : '') + ' imported from ' + file.name
-              : 'No new valid emails in ' + file.name + '.',
-            added > 0 ? 'success' : 'info'
-          );
+          if (added > 0) {
+            showToast(added + ' email' + (added > 1 ? 's' : '') + ' imported.', 'success');
+            showCopyScreen();
+          } else {
+            showToast('No new valid emails in ' + file.name + '.', 'info');
+          }
         } catch (err) {
           showToast('Error parsing Excel: ' + err.message, 'error');
         }
-        pendingFile = null;
         $('#fileInput').value = '';
       };
       reader.readAsArrayBuffer(file);
     } else {
       showToast('Unsupported file format.', 'error');
-      pendingFile = null;
       $('#fileInput').value = '';
     }
   }
@@ -280,6 +284,22 @@
       saveState();
       render();
       showToast('Cleared ' + count + ' email' + (count > 1 ? 's' : '') + '.', 'info');
+      showImportScreen();
+    });
+  }
+
+  /* ---- Row copy handler ---- */
+  function handleRowCopy(index) {
+    const text = emails[index].email;
+    copyToClipboard(text).then((ok) => {
+      if (ok) {
+        markDone(index);
+        const row = document.querySelector('.email-row[data-index="' + index + '"]');
+        if (row) row.classList.add('flash-copied');
+        showToast('Copied: ' + text, 'success');
+      } else {
+        showToast('Failed to copy.', 'error');
+      }
     });
   }
 
@@ -297,11 +317,12 @@
     $('#statDone').textContent = doneCount;
     $('#statRemaining').textContent = remaining;
     $('#liveCount').textContent = total + ' email' + (total !== 1 ? 's' : '');
+    $('#listCount').textContent = total;
 
     if (list.length === 0) {
       container.innerHTML =
         '<div class="list-empty"><i class="ti ti-mail-off"></i><p>' +
-        (emails.length === 0 ? 'No emails yet. Import or add emails above.' : 'No matching emails found.') +
+        (emails.length === 0 ? 'No emails yet.' : 'No matching emails found.') +
         '</p></div>';
       return;
     }
@@ -340,6 +361,17 @@
   /* ---- Init ---- */
   function init() {
     loadState();
+
+    /* Screen: choose which to show on load */
+    if (emails.length > 0) {
+      showCopyScreen();
+      showToast('Loaded ' + emails.length + ' email' + (emails.length > 1 ? 's' : '') + ' from storage.', 'info');
+    } else {
+      showImportScreen();
+    }
+
+    /* Import More button */
+    $('#backToImportBtn').addEventListener('click', showImportScreen);
 
     /* Tabs */
     $$('#importTabs .tab-btn').forEach((btn) => {
@@ -380,14 +412,14 @@
     $('#addSingleBtn').addEventListener('click', () => {
       const r = addSingle(singleInput.value);
       showToast(r.msg, r.ok ? 'success' : 'error');
-      if (r.ok) { singleInput.value = ''; singleInput.focus(); }
+      if (r.ok) { singleInput.value = ''; showCopyScreen(); singleInput.focus(); }
     });
     singleInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         const r = addSingle(singleInput.value);
         showToast(r.msg, r.ok ? 'success' : 'error');
-        if (r.ok) { singleInput.value = ''; }
+        if (r.ok) { singleInput.value = ''; showCopyScreen(); }
       }
     });
 
@@ -411,7 +443,7 @@
     $('#copyAllBtn').addEventListener('click', handleCopyAll);
     $('#clearAllBtn').addEventListener('click', handleClearAll);
 
-    /* Email list: click-to-copy on row, button actions */
+    /* Email list delegation */
     $('#emailList').addEventListener('click', (e) => {
       const target = e.target.closest('button');
       const row = e.target.closest('.email-row');
@@ -419,41 +451,18 @@
       const index = parseInt(row.getAttribute('data-index'), 10);
       if (isNaN(index) || index < 0 || index >= emails.length) return;
 
-      /* Action button clicked */
       if (target) {
         e.stopPropagation();
-        if (target.classList.contains('copy-act')) {
-          handleRowCopy(index);
-        } else if (target.classList.contains('toggle-act')) {
-          toggleDone(index);
-        } else if (target.classList.contains('del-act')) {
-          removeEmail(index);
-        }
+        if (target.classList.contains('copy-act')) { handleRowCopy(index); }
+        else if (target.classList.contains('toggle-act')) { toggleDone(index); }
+        else if (target.classList.contains('del-act')) { removeEmail(index); }
         return;
       }
 
-      /* Click on row itself = copy email */
       handleRowCopy(index);
     });
 
-    function handleRowCopy(index) {
-      const text = emails[index].email;
-      copyToClipboard(text).then((ok) => {
-        if (ok) {
-          markDone(index);
-          const row = document.querySelector('.email-row[data-index="' + index + '"]');
-          if (row) { row.classList.add('flash-copied'); }
-          showToast('Copied: ' + text, 'success');
-        } else {
-          showToast('Failed to copy.', 'error');
-        }
-      });
-    }
-
     render();
-    if (emails.length > 0) {
-      showToast('Loaded ' + emails.length + ' email' + (emails.length > 1 ? 's' : '') + ' from storage.', 'info');
-    }
   }
 
   if (document.readyState === 'loading') {

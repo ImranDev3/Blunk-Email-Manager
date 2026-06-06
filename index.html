@@ -15,9 +15,7 @@
   <header class="header">
     <div class="header-inner">
       <div class="flex items-center gap-3">
-        <div class="header-icon">
-          <i class="ti ti-mail"></i>
-        </div>
+        <div class="header-icon"><i class="ti ti-mail"></i></div>
         <div>
           <h1 class="header-title">Blunk Email Manager</h1>
           <p class="header-sub">Bulk email processor</p>
@@ -27,33 +25,88 @@
     </div>
   </header>
 
-  <!-- ===== MAIN ===== -->
-  <main class="main-container">
+  <!-- ===== SCREEN 1: IMPORT ===== -->
+  <main class="main-container screen-import" id="screenImport">
+    <div class="screen-label">
+      <i class="ti ti-database-import"></i>
+      <span>Import Emails</span>
+    </div>
 
-    <!-- STATS CARDS -->
+    <div class="tabs-container">
+      <div class="tabs-nav" id="importTabs">
+        <button class="tab-btn active" data-tab="paste">
+          <i class="ti ti-clipboard-text"></i> <span>Paste</span>
+        </button>
+        <button class="tab-btn" data-tab="upload">
+          <i class="ti ti-upload"></i> <span>Upload</span>
+        </button>
+        <button class="tab-btn" data-tab="single">
+          <i class="ti ti-plus-circle"></i> <span>Add Single</span>
+        </button>
+      </div>
+
+      <div class="tab-panel active" id="tabPaste">
+        <textarea id="pasteArea" placeholder="Paste emails in any format...&#10;example@mail.com, test@mail.com&#10;user@domain.com"></textarea>
+        <div class="tab-actions">
+          <button class="btn btn-primary" id="parsePasteBtn"><i class="ti ti-player-play"></i> Parse &amp; Import</button>
+          <button class="btn btn-ghost" id="clearPasteBtn"><i class="ti ti-trash"></i> Clear</button>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tabUpload">
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-icon"><i class="ti ti-cloud-upload"></i></div>
+          <p class="upload-text"><strong>Browse files</strong> or drop here</p>
+          <p class="upload-hint">Supports .xlsx, .csv, .txt</p>
+        </div>
+        <input type="file" id="fileInput" class="hidden-input" accept=".xlsx,.csv,.txt" />
+      </div>
+
+      <div class="tab-panel" id="tabSingle">
+        <div class="single-row">
+          <input type="email" id="singleEmail" placeholder="Enter email address..." />
+          <button class="btn btn-primary" id="addSingleBtn"><i class="ti ti-plus"></i> Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="import-footer">
+      <i class="ti ti-arrow-right"></i>
+      <span>After import you'll be taken to the copy page</span>
+    </div>
+  </main>
+
+  <!-- ===== SCREEN 2: COPY / MANAGE ===== -->
+  <main class="main-container screen-copy" id="screenCopy" style="display:none;">
+
+    <!-- mini header with back button -->
+    <div class="copy-topbar">
+      <button class="btn btn-ghost btn-sm" id="backToImportBtn">
+        <i class="ti ti-arrow-left"></i> Import More
+      </button>
+      <span class="copy-topbar-title">
+        <i class="ti ti-mail"></i> Email List
+      </span>
+      <span class="header-badge" id="listCount">0</span>
+    </div>
+
     <div class="stats-grid" id="statsBar">
       <div class="stat-card total">
-        <div class="stat-icon">
-          <i class="ti ti-mail-opened"></i>
-        </div>
+        <div class="stat-icon"><i class="ti ti-mail-opened"></i></div>
         <div class="stat-info">
           <span class="stat-value" id="statTotal">0</span>
-          <span class="stat-label">Total Emails</span>
+          <span class="stat-label">Total</span>
         </div>
       </div>
       <div class="stat-card done">
-        <div class="stat-icon">
-          <i class="ti ti-circle-check"></i>
-        </div>
+        <div class="stat-icon"><i class="ti ti-circle-check"></i></div>
         <div class="stat-info">
           <span class="stat-value" id="statDone">0</span>
           <span class="stat-label">Done</span>
         </div>
       </div>
       <div class="stat-card remaining">
-        <div class="stat-icon">
-          <i class="ti ti-hourglass"></i>
-        </div>
+        <div class="stat-icon"><i class="ti ti-hourglass"></i></div>
         <div class="stat-info">
           <span class="stat-value" id="statRemaining">0</span>
           <span class="stat-label">Remaining</span>
@@ -61,60 +114,6 @@
       </div>
     </div>
 
-    <!-- IMPORT TABS -->
-    <div class="tabs-container">
-      <div class="tabs-nav" id="importTabs">
-        <button class="tab-btn active" data-tab="paste">
-          <i class="ti ti-clipboard-text"></i>
-          <span>Paste</span>
-        </button>
-        <button class="tab-btn" data-tab="upload">
-          <i class="ti ti-upload"></i>
-          <span>Upload</span>
-        </button>
-        <button class="tab-btn" data-tab="single">
-          <i class="ti ti-plus-circle"></i>
-          <span>Add Single</span>
-        </button>
-      </div>
-
-      <!-- Paste Tab -->
-      <div class="tab-panel active" id="tabPaste">
-        <textarea id="pasteArea" placeholder="Paste emails in any format...&#10;example@mail.com, test@mail.com&#10;user@domain.com"></textarea>
-        <div class="tab-actions">
-          <button class="btn btn-primary" id="parsePasteBtn">
-            <i class="ti ti-player-play"></i> Parse &amp; Import
-          </button>
-          <button class="btn btn-ghost" id="clearPasteBtn">
-            <i class="ti ti-trash"></i> Clear
-          </button>
-        </div>
-      </div>
-
-      <!-- Upload Tab -->
-      <div class="tab-panel" id="tabUpload">
-        <div class="upload-zone" id="uploadZone">
-          <div class="upload-icon">
-            <i class="ti ti-cloud-upload"></i>
-          </div>
-          <p class="upload-text"><strong>Browse files</strong> or drop them here</p>
-          <p class="upload-hint">Supports .xlsx, .csv, .txt</p>
-        </div>
-        <input type="file" id="fileInput" class="hidden-input" accept=".xlsx,.csv,.txt" />
-      </div>
-
-      <!-- Single Add Tab -->
-      <div class="tab-panel" id="tabSingle">
-        <div class="single-row">
-          <input type="email" id="singleEmail" placeholder="Enter email address..." />
-          <button class="btn btn-primary" id="addSingleBtn">
-            <i class="ti ti-plus"></i> Add
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TOOLBAR -->
     <div class="toolbar" id="toolbar">
       <div class="filter-group" id="filterGroup">
         <button class="filter-btn active" data-filter="all">All</button>
@@ -126,23 +125,17 @@
         <input type="text" id="searchInput" placeholder="Search emails..." />
       </div>
       <div class="bulk-group">
-        <button class="btn btn-sm btn-success" id="copyAllBtn">
-          <i class="ti ti-copy"></i> Copy Remaining
-        </button>
-        <button class="btn btn-sm btn-danger" id="clearAllBtn">
-          <i class="ti ti-trash"></i> Clear All
-        </button>
+        <button class="btn btn-sm btn-success" id="copyAllBtn"><i class="ti ti-copy"></i> Copy Remaining</button>
+        <button class="btn btn-sm btn-danger" id="clearAllBtn"><i class="ti ti-trash"></i> Clear All</button>
       </div>
     </div>
 
-    <!-- EMAIL LIST -->
     <div class="list-wrap" id="emailList"></div>
-
   </main>
 
-  <!-- ===== TOAST CONTAINER ===== -->
   <div class="toast-container" id="toastContainer"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
