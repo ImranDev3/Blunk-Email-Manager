@@ -420,9 +420,107 @@
     return d.innerHTML;
   }
 
-  /* ---- Init ---- */
+  /* ---- Palette / Color API (colormind.io) ---- */
+  const DEFAULT_PALETTE = [
+    [167, 139, 250],  // primary - purple
+    [139, 92, 246],   // primary-dark
+    [52, 211, 153],   // success - emerald
+    [251, 113, 133],  // danger - rose
+    [251, 191, 36],   // warning - amber
+  ];
+
+  let currentPalette = null;
+
+  function rgbStr(c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+
+  function applyPalette(palette) {
+    if (!palette || palette.length < 5) return;
+    currentPalette = palette;
+    const root = document.documentElement;
+    root.style.setProperty('--primary', rgbStr(palette[0]));
+    root.style.setProperty('--primary-dark', rgbStr(palette[1]));
+    root.style.setProperty('--primary-glow', 'rgba(' + palette[0][0] + ',' + palette[0][1] + ',' + palette[0][2] + ',0.15)');
+    root.style.setProperty('--success', rgbStr(palette[2]));
+    root.style.setProperty('--success-glow', 'rgba(' + palette[2][0] + ',' + palette[2][1] + ',' + palette[2][2] + ',0.15)');
+    root.style.setProperty('--danger', rgbStr(palette[3]));
+    root.style.setProperty('--warning', rgbStr(palette[4]));
+    updateSwatches(palette);
+    try { localStorage.setItem('emailBulkMgr_palette', JSON.stringify(palette)); } catch (_) {}
+  }
+
+  function updateSwatches(palette) {
+    const container = $('#paletteSwatches');
+    if (!container) return;
+    container.innerHTML = palette.map(function (c) {
+      return '<span class="palette-swatch" style="background:' + rgbStr(c) + '"></span>';
+    }).join('');
+  }
+
+  function fetchPalette() {
+    // Try saved palette first
+    try {
+      var saved = localStorage.getItem('emailBulkMgr_palette');
+      if (saved) { var p = JSON.parse(saved); if (p && p.length === 5) { applyPalette(p); return; } }
+    } catch (_) {}
+
+    // Apply default while waiting
+    applyPalette(DEFAULT_PALETTE);
+
+    // Fetch from colormind.io
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://colormind.io/api/', true);
+    xhr.timeout = 5000;
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          if (data && data.result && data.result.length === 5) {
+            applyPalette(data.result);
+          }
+        } catch (_) {}
+      }
+    };
+    xhr.onerror = function () { /* fallback to default */ };
+    xhr.ontimeout = function () { /* fallback to default */ };
+    xhr.send(JSON.stringify({ model: 'default' }));
+  }
   function init() {
     loadState();
+
+    /* Load / fetch color palette */
+    fetchPalette();
+
+    /* Palette refresh button */
+    $('#paletteBtn').addEventListener('click', function () {
+      this.disabled = true;
+      this.innerHTML = '<i class="ti ti-loader"></i> Loading...';
+      try { localStorage.removeItem('emailBulkMgr_palette'); } catch (_) {}
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://colormind.io/api/', true);
+      xhr.timeout = 5000;
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          try {
+            var data = JSON.parse(xhr.responseText);
+            if (data && data.result && data.result.length === 5) {
+              applyPalette(data.result);
+            }
+          } catch (_) {}
+        }
+        var btn = $('#paletteBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-palette"></i> Palette';
+      };
+      xhr.onerror = function () {
+        var btn = $('#paletteBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ti ti-palette"></i> Palette';
+      };
+      xhr.ontimeout = xhr.onerror;
+      xhr.send(JSON.stringify({ model: 'default' }));
+    });
 
     /* Screen: choose which to show on load */
     if (emails.length > 0) {
