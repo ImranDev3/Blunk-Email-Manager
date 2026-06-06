@@ -188,7 +188,6 @@
     const parts = email.trim().toLowerCase().split('@');
     if (parts.length !== 2) return [];
     const [name, domain] = parts;
-    if (domain !== 'gmail.com' && domain !== 'googlemail.com') return [];
     const n = name.length;
     if (n < 2) return [];
     const total = Math.pow(2, n - 1);
@@ -200,7 +199,7 @@
         dotted += name[i];
         if (i < n - 1 && (mask & (1 << i))) dotted += '.';
       }
-      results.push(dotted + '@gmail.com');
+      results.push(dotted + '@' + domain);
     }
     return results;
   }
@@ -209,8 +208,8 @@
     const input = $('#dotInput').value.trim().toLowerCase();
     const parts = input.split('@');
     const countEl = $('#dotCount');
-    if (parts.length !== 2 || (parts[1] !== 'gmail.com' && parts[1] !== 'googlemail.com')) {
-      countEl.textContent = 'Need @gmail.com';
+    if (parts.length !== 2 || !parts[0] || !parts[1]) {
+      countEl.textContent = 'Enter email@domain';
       countEl.style.color = 'var(--text-muted)';
       return;
     }
@@ -229,7 +228,7 @@
     if (isNaN(count) || count < 1) count = 100;
     const dots = generateDotEmails(input, count);
     if (dots.length === 0) {
-      showToast('Only works with @gmail.com addresses.', 'error');
+      showToast('Invalid email or name too short.', 'error');
       return;
     }
     const added = addEmails(dots);
