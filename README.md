@@ -1,6 +1,10 @@
 # Blunk Email Manager
 
+> Developed by [**ImranDev3**](https://github.com/ImranDev3)
+
 A professional, browser-based bulk email management tool with a premium dark UI, intelligent copy queue, and dynamic color theming. No server or build step required — works entirely offline after first load.
+
+🔗 **GitHub Repository**: [github.com/ImranDev3/Blunk-Email-Manager](https://github.com/ImranDev3/Blunk-Email-Manager)
 
 ## Features
 
@@ -114,6 +118,13 @@ cd Blunk-Email-Manager
 
 MIT — free to use, modify, and distribute.
 
+---
+
 ## Credits
 
-Built by [ImranDev3](https://github.com/ImranDev3).
+**Blunk Email Manager** was built with care by **ImranDev3**.
+
+- GitHub: [github.com/ImranDev3](https://github.com/ImranDev3)
+- Repository: [github.com/ImranDev3/Blunk-Email-Manager](https://github.com/ImranDev3/Blunk-Email-Manager)
+
+If you find this tool useful, consider starring the repo ⭐
