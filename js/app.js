@@ -352,8 +352,21 @@
     copyToClipboard(text).then((ok) => {
       if (ok) {
         markDone(index);
+
         const card = document.querySelector('.email-card[data-index="' + index + '"]');
         if (card) card.classList.add('flash-copied');
+
+        /* Auto-scroll to next pending card */
+        setTimeout(function () {
+          var nextCard = document.querySelector('.email-card:not(.done)');
+          if (nextCard) {
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            nextCard.style.transition = 'box-shadow 0.3s';
+            nextCard.style.boxShadow = '0 0 0 2px var(--primary), 0 4px 16px rgba(124,140,248,0.25)';
+            setTimeout(function () { nextCard.style.boxShadow = ''; }, 1500);
+          }
+        }, 120);
+
         showToast('Copied: ' + text, 'success');
       } else {
         showToast('Failed to copy.', 'error');
